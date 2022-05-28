@@ -1,5 +1,4 @@
-# Hafla
-
+# Coding round
 For interview - Coding round
 
 Challenge: Calculator
