@@ -27,7 +27,7 @@ Parser.calculate = function (input, env) {
         throw "Not found: " + input.value;
     }
   } else if (input.type === "expression") {
-    return this.calculate(input.expression, env);
+    return this.calculate(input.subtree, env);
   }
 };
 
@@ -85,15 +85,6 @@ Parser.prototype.parseHelper = function (tokenArray) {
     return { type: "number", value: parseFloat(tokenArray[0]) };
   }
   throw `Cannot process: ${tokenArray}`;
-};
-
-Parser.prototype._indexOfIdentifier = function (tokenArr) {
-  for (var i = 0; i < tokenArr.length; i++) {
-    if (/^[a-z]+$/.test(tokenArr[i])) {
-      return i;
-    }
-  }
-  return -1;
 };
 
 Parser.prototype.findMatchingParent = function (tokens, lparenIdx) {

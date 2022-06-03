@@ -23,7 +23,14 @@ Lexer.prototype.nextToken = function () {
       continue;
     } else if (["(", ")", "+", "/"].indexOf(this.c) > -1) {
       return this.symbol();
-    } else if (this.c === "*") {
+    } else if(this.c == "-") {
+      if(this.isOperator()) {
+        return this.symbol();
+      }
+      else {
+        return this.number()
+      }
+    }else if (this.c === "*") {
       this.consume();
       if (this.c === "*") {
         this.consume();
@@ -49,9 +56,12 @@ Lexer.prototype.symbol = function () {
   return c;
 };
 
+Lexer.prototype.isOperator = function() {
+  return this.isNumber(this.input[this.p -1]) && this.isNumber(this.input[this.p + 1])
+}
+
 Lexer.prototype.number = function () {
   var result = [];
-  // allow negatives at the front only
   if (this.c === "-") {
     result.push("-");
     this.consume();

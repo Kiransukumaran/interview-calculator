@@ -12,15 +12,11 @@ var rl = readline.createInterface({
 rl.setPrompt("calc ");
 rl.prompt();
 
-var debug = process.argv.slice(2).indexOf("-debug") > -1;
 var env = {};
 
 rl.on("line", function (line) {
   try {
     var tokens = new Lexer(line.trim()).tokenize();
-    if (debug) {
-      console.log(" => ", new Parser(tokens, env).parse());
-    }
     console.log(" => ", Parser.evaluate(tokens, env));
   } catch (e) {
     console.error(e);
