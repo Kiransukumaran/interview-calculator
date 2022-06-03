@@ -13,11 +13,18 @@ rl.setPrompt("calc ");
 rl.prompt();
 
 var env = {};
+let result;
 
 rl.on("line", function (line) {
   try {
-    var tokens = new Lexer(line.trim()).tokenize();
-    console.log(" => ", Parser.evaluate(tokens, env));
+    let tokens;
+    if (result) {
+      tokens = new Lexer((result + line).trim()).tokenize();
+    } else {
+      tokens = new Lexer(line.trim()).tokenize();
+    }
+    result = Parser.evaluate(tokens, env);
+    console.log(" => ", result);
   } catch (e) {
     console.error(e);
   }
