@@ -23,16 +23,13 @@ Parser.calculate = function (input, env) {
         return lhs - rhs;
       case "/":
         return lhs / rhs;
+      case "**":
+        return lhs ** rhs;
       default:
         throw "Not found: " + input.value;
     }
   } else if (input.type === "expression") {
     return this.calculate(input.subtree, env);
-  } else if (input.type == "exponent") {
-    return Math.pow(
-      this.calculate(input.lhs, env),
-      this.calculate(input.rhs, env)
-    );
   }
 };
 
@@ -42,21 +39,6 @@ Parser.prototype.parse = function () {
 
 Parser.prototype.parseParentExpressions = function (tokenArray) {
   return { type: "expression", subtree: this.parseHelper(tokenArray) };
-};
-
-Parser.prototype.handleExponents = function (tokenArray) {
-  let exponentIndex;
-  do {
-    exponentIndex = tokenArray.indexOf("**");
-    if (exponentIndex > -1) {
-      let pow = {
-        type: "exponent",
-        lhs: this.parseHelper([tokenArray[exponentIndex - 1]]),
-        rhs: this.parseHelper([tokenArray[exponentIndex + 1]]),
-      };
-      tokenArray.splice(exponentIndex - 1, 3, pow);
-    }
-  } while (exponentIndex > -1);
 };
 
 Parser.prototype.handleParentExpressions = function (tokenArray) {
@@ -75,8 +57,7 @@ Parser.prototype.handleParentExpressions = function (tokenArray) {
 
 Parser.prototype.parseHelper = function (tokenArray) {
   this.handleParentExpressions(tokenArray);
-  this.handleExponents(tokenArray);
-  const ops = ["+", "-", "*", "/"];
+  const ops = ["+", "-", "*", "/", "**"];
 
   let inputOperator, tokenIndex;
 
@@ -99,7 +80,7 @@ Parser.prototype.parseHelper = function (tokenArray) {
     };
   } else if (
     tokenArray.length === 1 &&
-    ["expression", "exponent"].indexOf(tokenArray[0].type) > -1
+    ["expression"].indexOf(tokenArray[0].type) > -1
   ) {
     return tokenArray[0];
   } else if (tokenArray.length === 1 && /[-0-9.]+/.test(tokenArray[0])) {
